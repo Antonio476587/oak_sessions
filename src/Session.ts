@@ -27,14 +27,18 @@ export default class Session {
   // user should interact with data using `get(), set(), flash(), has()`
   private data: SessionData
   private ctx: Context
+  private isDirty: boolean = false
+  private lastAccessUpdate: number = 0
+  private readonly accessUpdateInterval: number = 300000 // 5 minutes
 
   // construct a Session with no data and id
   // private: force user to create session in initMiddleware()
   private constructor (sid : string, data : SessionData, ctx : Context) {
-
     this.sid = sid
     this.data = data
     this.ctx = ctx
+    this.isDirty = false
+    this.lastAccessUpdate = data._accessed ? new Date(data._accessed).getTime() : 0
   }
 
   static initMiddleware(store: Store | CookieStore = new MemoryStore(), {
@@ -74,8 +78,8 @@ export default class Session {
       // store session to ctx.state so user can interact (set, get) with it
       ctx.state.session = session;
 
-      // update _access time
-      session.set('_accessed', new Date().toISOString())
+      // update _access time only if needed (microservice optimization)
+      session.updateAccessTime()
       await ctx.cookies.set(sessionCookieName, session.sid, cookieSetOptions)
 
 
@@ -87,8 +91,11 @@ export default class Session {
         await ctx.cookies.set(sessionCookieName, session.sid, cookieSetOptions)
       }
 
-      // request done, push session data to store
-      await session.persistSessionData(store)
+      // request done, push session data to store only if there are changes (microservice optimization)
+      if (session.needsPersistence()) {
+        await session.persistSessionData(store)
+        session.isDirty = false // Reset dirty flag after persistence
+      }
 
       if (session.data._delete) {
         store instanceof CookieStore ? store.deleteSession(ctx) : await store.deleteSession(session.sid)
@@ -136,6 +143,7 @@ export default class Session {
   // deno-lint-ignore require-await
   async deleteSession() : Promise<void> {
     this.data._delete = true
+    this.isDirty = true
   }
 
   // push current session data to Session.store
@@ -162,13 +170,35 @@ export default class Session {
     } else {
       this.data[key] = value
     }
+    this.isDirty = true
   }
 
   flash(key : string, value : unknown) {
     this.data['_flash'][key] = value
+    this.isDirty = true
   }
 
   has(key : string) {
     return key in this.data || key in this.data['_flash'];
+  }
+
+  // Check if session needs to be persisted (has changes or needs access time update)
+  public needsPersistence(): boolean {
+    return this.isDirty || this.needsAccessUpdate()
+  }
+
+  // Check if access time needs updating (only every 5 minutes)
+  private needsAccessUpdate(): boolean {
+    const now = Date.now()
+    return (now - this.lastAccessUpdate) > this.accessUpdateInterval
+  }
+
+  // Update access time only if needed
+  public updateAccessTime(): void {
+    if (this.needsAccessUpdate()) {
+      this.data._accessed = new Date().toISOString()
+      this.lastAccessUpdate = Date.now()
+      this.isDirty = true
+    }
   }
 }

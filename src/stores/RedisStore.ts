@@ -12,11 +12,10 @@ export default class RedisStore implements Store {
   }
 
   async getSessionById(sessionId : string) {
-    const session = await this.db.get(this.keyPrefix + sessionId)
+    const sessionString = await this.db.get(this.keyPrefix + sessionId)
 
-    if (session) {
-      const sessionString = String(await this.db.get(this.keyPrefix + sessionId))
-      const value = JSON.parse(sessionString) as SessionData
+    if (sessionString) {
+      const value = JSON.parse(String(sessionString)) as SessionData
       return value
     } else {
       return null
@@ -24,7 +23,17 @@ export default class RedisStore implements Store {
   }
 
   async createSession(sessionId : string, initialData: SessionData) {
-    await this.db.set(this.keyPrefix + sessionId, JSON.stringify(initialData))
+    const key = this.keyPrefix + sessionId
+    await this.db.set(key, JSON.stringify(initialData))
+    
+    // Set TTL if session has expiration (microservice optimization)
+    if (initialData._expire) {
+      const expireTime = new Date(initialData._expire)
+      const ttlSeconds = Math.max(0, Math.floor((expireTime.getTime() - Date.now()) / 1000))
+      if (ttlSeconds > 0) {
+        await this.db.expire(key, ttlSeconds)
+      }
+    }
   }
 
   async deleteSession(sessionId : string) {
@@ -32,6 +41,16 @@ export default class RedisStore implements Store {
   }
 
   async persistSessionData(sessionId : string, sessionData : SessionData) {
-    await this.db.set(this.keyPrefix + sessionId, JSON.stringify(sessionData))
+    const key = this.keyPrefix + sessionId
+    await this.db.set(key, JSON.stringify(sessionData))
+    
+    // Set TTL if session has expiration
+    if (sessionData._expire) {
+      const expireTime = new Date(sessionData._expire)
+      const ttlSeconds = Math.max(0, Math.floor((expireTime.getTime() - Date.now()) / 1000))
+      if (ttlSeconds > 0) {
+        await this.db.expire(key, ttlSeconds)
+      }
+    }
   }
 }
