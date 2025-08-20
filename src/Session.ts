@@ -31,13 +31,12 @@ export default class Session {
   private lastAccessUpdate: number = 0
   private readonly accessUpdateInterval: number = 300000 // 5 minutes
 
-  // construct a Session with no data and id
-  // private: force user to create session in initMiddleware()
+  // Private constructor - sessions created via initMiddleware only
   private constructor (sid : string, data : SessionData, ctx : Context) {
     this.sid = sid
     this.data = data
     this.ctx = ctx
-    this.isDirty = false
+    // isDirty already initialized in property declaration
     this.lastAccessUpdate = data._accessed ? new Date(data._accessed).getTime() : 0
   }
 
