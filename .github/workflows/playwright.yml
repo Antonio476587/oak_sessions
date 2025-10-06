@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 jobs:
   test-memory-store:
     timeout-minutes: 60
@@ -11,22 +11,22 @@ jobs:
     env:
       STORE: memory
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: denoland/setup-deno@v2
-      with:
-        deno-version: v2.0.3
-    - name: Install dependencies
-      working-directory: ./playwright
-      run: npm ci
-    - name: Install Playwright Browsers
-      working-directory: ./playwright
-      run: npx playwright install chromium
-    - name: Run Playwright tests
-      working-directory: ./playwright
-      run: npx playwright test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.0.3
+      - name: Install dependencies
+        working-directory: ./playwright
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: ./playwright
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        working-directory: ./playwright
+        run: npx playwright test
 
   test-redis-store:
     timeout-minutes: 60
@@ -34,26 +34,26 @@ jobs:
     env:
       STORE: redis
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: denoland/setup-deno@v2
-      with:
-        deno-version: v2.0.3
-    - name: Setup Redis
-      uses: supercharge/redis-github-action@1.4.0
-      with:
-        redis-version: 7
-    - name: Install dependencies
-      working-directory: ./playwright
-      run: npm ci
-    - name: Install Playwright Browsers
-      working-directory: ./playwright
-      run: npx playwright install chromium
-    - name: Run Playwright tests
-      working-directory: ./playwright
-      run: npx playwright test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.0.3
+      - name: Setup Redis
+        uses: supercharge/redis-github-action@1.4.0
+        with:
+          redis-version: 7
+      - name: Install dependencies
+        working-directory: ./playwright
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: ./playwright
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        working-directory: ./playwright
+        run: npx playwright test
 
   test-mongo-store:
     timeout-minutes: 60
@@ -61,26 +61,26 @@ jobs:
     env:
       STORE: mongo
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: denoland/setup-deno@v2
-      with:
-        deno-version: v2.0.3
-    - name: Setup Mongo
-      uses: supercharge/mongodb-github-action@1.8.0
-      with:
-        mongodb-version: 6.0
-    - name: Install dependencies
-      working-directory: ./playwright
-      run: npm ci
-    - name: Install Playwright Browsers
-      working-directory: ./playwright
-      run: npx playwright install chromium
-    - name: Run Playwright tests
-      working-directory: ./playwright
-      run: npx playwright test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.0.3
+      - name: Setup Mongo
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: 6.0
+      - name: Install dependencies
+        working-directory: ./playwright
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: ./playwright
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        working-directory: ./playwright
+        run: npx playwright test
 
   test-cookie-store:
     timeout-minutes: 60
@@ -88,22 +88,22 @@ jobs:
     env:
       STORE: cookie
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: denoland/setup-deno@v2
-      with:
-        deno-version: v2.0.3
-    - name: Install dependencies
-      working-directory: ./playwright
-      run: npm ci
-    - name: Install Playwright Browsers
-      working-directory: ./playwright
-      run: npx playwright install chromium
-    - name: Run Playwright tests
-      working-directory: ./playwright
-      run: npx playwright test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.0.3
+      - name: Install dependencies
+        working-directory: ./playwright
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: ./playwright
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        working-directory: ./playwright
+        run: npx playwright test
 
   test-sqlite-store:
     timeout-minutes: 60
@@ -111,22 +111,22 @@ jobs:
     env:
       STORE: sqlite
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: denoland/setup-deno@v2
-      with:
-        deno-version: v2.0.3
-    - name: Install dependencies
-      working-directory: ./playwright
-      run: npm ci
-    - name: Install Playwright Browsers
-      working-directory: ./playwright
-      run: npx playwright install chromium
-    - name: Run Playwright tests
-      working-directory: ./playwright
-      run: npx playwright test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.0.3
+      - name: Install dependencies
+        working-directory: ./playwright
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: ./playwright
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        working-directory: ./playwright
+        run: npx playwright test
 
   test-webdis-store:
     timeout-minutes: 60
@@ -139,22 +139,22 @@ jobs:
     env:
       STORE: webdis
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: denoland/setup-deno@v2
-      with:
-        deno-version: v2.0.3
-    - name: Install dependencies
-      working-directory: ./playwright
-      run: npm ci
-    - name: Install Playwright Browsers
-      working-directory: ./playwright
-      run: npx playwright install chromium
-    - name: Run Playwright tests
-      working-directory: ./playwright
-      run: npx playwright test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.0.3
+      - name: Install dependencies
+        working-directory: ./playwright
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: ./playwright
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        working-directory: ./playwright
+        run: npx playwright test
 
   test-postgres-store:
     timeout-minutes: 60
@@ -174,19 +174,19 @@ jobs:
     env:
       STORE: postgres
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - uses: denoland/setup-deno@v2
-      with:
-        deno-version: v2.0.3
-    - name: Install dependencies
-      working-directory: ./playwright
-      run: npm ci
-    - name: Install Playwright Browsers
-      working-directory: ./playwright
-      run: npx playwright install chromium
-    - name: Run Playwright tests
-      working-directory: ./playwright
-      run: npx playwright test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.0.3
+      - name: Install dependencies
+        working-directory: ./playwright
+        run: npm ci
+      - name: Install Playwright Browsers
+        working-directory: ./playwright
+        run: npx playwright install chromium
+      - name: Run Playwright tests
+        working-directory: ./playwright
+        run: npx playwright test

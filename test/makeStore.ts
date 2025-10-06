@@ -1,10 +1,10 @@
 import {
   CookieStore,
   MemoryStore,
+  MongoStore,
   PostgresStore,
   RedisStore,
   SqliteStore,
-  MongoStore,
   Store,
   WebdisStore,
 } from "../mod.ts";

@@ -1,6 +1,9 @@
-import Store from './Store.ts'
-import type { Database, Collection } from "https://deno.land/x/mongo@v0.31.2/mod.ts";
-import type { SessionData } from '../Session.ts'
+import Store from "./Store.ts";
+import type {
+  Collection,
+  Database,
+} from "https://deno.land/x/mongo@v0.31.2/mod.ts";
+import type { SessionData } from "../Session.ts";
 
 interface MongoSession {
   id: string;
@@ -8,43 +11,43 @@ interface MongoSession {
 }
 
 export default class MongoStore implements Store {
-  db: Database
-  sessions: Collection<MongoSession>
+  db: Database;
+  sessions: Collection<MongoSession>;
 
-  constructor(db : Database, collectionName = 'sessions') {
-    this.db = db
-    this.sessions = db.collection(collectionName)
+  constructor(db: Database, collectionName = "sessions") {
+    this.db = db;
+    this.sessions = db.collection(collectionName);
   }
 
-  async getSessionById(sessionId : string) {
-    const session = await this.sessions.findOne({ id: sessionId })
+  async getSessionById(sessionId: string) {
+    const session = await this.sessions.findOne({ id: sessionId });
 
-    return session ? session.data : null
+    return session ? session.data : null;
   }
 
-  async createSession(sessionId : string, initialData : SessionData) {
+  async createSession(sessionId: string, initialData: SessionData) {
     await this.sessions.replaceOne(
       { id: sessionId },
       {
         id: sessionId,
-        data: initialData
+        data: initialData,
       },
-      { upsert: true }
-    )
+      { upsert: true },
+    );
   }
 
-  async deleteSession(sessionId : string) {
-    await this.sessions.deleteOne({ id: sessionId })
+  async deleteSession(sessionId: string) {
+    await this.sessions.deleteOne({ id: sessionId });
   }
 
-  async persistSessionData(sessionId : string, sessionData : SessionData) {
+  async persistSessionData(sessionId: string, sessionData: SessionData) {
     await this.sessions.replaceOne(
       { id: sessionId },
       {
         id: sessionId,
-        data: sessionData
+        data: sessionData,
       },
-      { upsert: true }
-    )
+      { upsert: true },
+    );
   }
 }
