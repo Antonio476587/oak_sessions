@@ -47,9 +47,20 @@ export default class Session {
     sessionCookieName = "session",
   }: SessionOptions = {}) {
     const initMiddleware: Middleware = async (ctx, next) => {
+      if (
+        ctx.request.url.pathname.includes("/health") ||
+        ctx.request.userAgent?.ua.includes("Deno") ||
+        ctx.request.userAgent?.ua.includes("Go")
+      ) {
+        return await next();
+      }
       // get sessionId from cookie
-      const sid = await ctx.cookies.get(sessionCookieName, cookieGetOptions);
+      console.log("Request Context:");
+      const sid = await ctx.cookies.get(sessionCookieName, cookieGetOptions) ||
+        ctx.request.headers.get("Session-ID");
       let session: Session;
+
+      console.log("Received session ID:\t", sid);
 
       if (sid) {
         // load session data from store

@@ -12,7 +12,7 @@ export default class WebdisStore implements Store {
 
   constructor(options: WebdisOptions) {
     this.url = options.url;
-    this.keyPrefix = options.keyPrefix || "session_";
+    this.keyPrefix = options.keyPrefix || "psyque:session:";
   }
 
   async getSessionById(sessionId: string) {

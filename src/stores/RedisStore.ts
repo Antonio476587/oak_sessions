@@ -6,7 +6,7 @@ export default class RedisStore implements Store {
   keyPrefix: string;
   db: Redis;
 
-  constructor(db: Redis, keyPrefix = "session_") {
+  constructor(db: Redis, keyPrefix = "psyque:session:") {
     this.keyPrefix = keyPrefix;
     this.db = db;
   }

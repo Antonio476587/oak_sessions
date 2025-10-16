@@ -213,7 +213,7 @@ const redis = await connect({
   port: 6379,
 });
 
-// pass redis connection into a new RedisStore. Optionally add a second string argument for a custom database prefix, default is 'session_'
+// pass redis connection into a new RedisStore. Optionally add a second string argument for a custom database prefix, default is 'psyque:session:'
 const store = new RedisStore(redis);
 
 // Attach sessions to middleware
