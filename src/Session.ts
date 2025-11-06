@@ -40,6 +40,7 @@ export default class Session {
       : 0;
   }
 
+  // TODO: Set correct options like expireAfterSeconds for initMiddleware
   static initMiddleware(store: Store | CookieStore = new MemoryStore(), {
     expireAfterSeconds = null,
     cookieGetOptions = {},
@@ -47,6 +48,7 @@ export default class Session {
     sessionCookieName = "session",
   }: SessionOptions = {}) {
     const initMiddleware: Middleware = async (ctx, next) => {
+      // TODO: Remove concrete route checking
       if (
         ctx.request.url.pathname.includes("/health") ||
         ctx.request.userAgent?.ua.includes("Deno") ||
