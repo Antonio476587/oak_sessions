@@ -24,16 +24,14 @@ export default class Session {
   sid: string;
   // user should interact with data using `get(), set(), flash(), has()`
   private data: SessionData;
-  private ctx: Context;
   private isDirty: boolean = false;
   private lastAccessUpdate: number = 0;
   private readonly accessUpdateInterval: number = 300000; // 5 minutes
 
   // Private constructor - sessions created via initMiddleware only
-  private constructor(sid: string, data: SessionData, ctx: Context) {
+  private constructor(sid: string, data: SessionData) {
     this.sid = sid;
     this.data = data;
-    this.ctx = ctx;
     // isDirty already initialized in property declaration
     this.lastAccessUpdate = data._accessed
       ? new Date(data._accessed).getTime()
@@ -73,8 +71,8 @@ export default class Session {
         if (sessionData) {
           // load success, check if it's valid (not expired)
           if (this.sessionValid(sessionData)) {
-            session = new Session(sid, sessionData, ctx);
-            await session.reupSession(store, expireAfterSeconds);
+            session = new Session(sid, sessionData);
+            await session.reupSession(ctx, store, expireAfterSeconds);
           } else {
             // invalid session
             store instanceof CookieStore
@@ -111,7 +109,7 @@ export default class Session {
 
       // request done, push session data to store only if there are changes (microservice optimization)
       if (session.needsPersistence()) {
-        await session.persistSessionData(store);
+        await session.persistSessionData(ctx, store);
         session.isDirty = false; // Reset dirty flag after persistence
       }
 
@@ -133,6 +131,7 @@ export default class Session {
 
   // should only be called in `initMiddleware()`
   private async reupSession(
+    ctx: Context,
     store: Store | CookieStore,
     expiration: number | null | undefined,
   ) {
@@ -140,7 +139,7 @@ export default class Session {
     this.data._expire = expiration
       ? new Date(Date.now() + expiration * 1000).toISOString()
       : null;
-    await this.persistSessionData(store);
+    await this.persistSessionData(ctx, store);
   }
 
   // should only be called in `initMiddleware()` when creating a new session
@@ -164,7 +163,7 @@ export default class Session {
       ? await store.createSession(ctx, sessionData)
       : await store.createSession(newID, sessionData);
 
-    return new Session(newID, sessionData, ctx);
+    return new Session(newID, sessionData);
   }
 
   // set _delete to true, will be deleted in middleware
@@ -178,9 +177,12 @@ export default class Session {
 
   // push current session data to Session.store
   // ctx is needed for CookieStore
-  private persistSessionData(store: Store | CookieStore): Promise<void> | void {
+  private persistSessionData(
+    ctx: Context,
+    store: Store | CookieStore,
+  ): Promise<void> | void {
     return store instanceof CookieStore
-      ? store.persistSessionData(this.ctx, this.data)
+      ? store.persistSessionData(ctx, this.data)
       : store.persistSessionData(this.sid, this.data);
   }
 
