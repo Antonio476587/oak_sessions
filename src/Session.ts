@@ -216,6 +216,10 @@ export default class Session {
     return key in this.data || key in this.data["_flash"];
   }
 
+  list(): string[] {
+    return Object.keys(this.data);
+  }
+
   // Check if session needs to be persisted (has changes or needs access time update)
   public needsPersistence(): boolean {
     return this.isDirty || this.needsAccessUpdate();
