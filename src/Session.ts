@@ -98,11 +98,15 @@ export default class Session {
 
       if (ctx.state.rotate_session_key && !(store instanceof CookieStore)) {
         await store.deleteSession(session.sid);
+        const rotatedData = { ...session.data } as SessionData;
+        if ("X-CSRF-Token" in rotatedData) {
+          delete rotatedData["X-CSRF-Token"];
+        }
         session = await this.createSession(
           ctx,
           store,
           expireAfterSeconds,
-          session.data,
+          rotatedData,
         );
         await ctx.cookies.set(sessionCookieName, session.sid, cookieSetOptions);
       }
